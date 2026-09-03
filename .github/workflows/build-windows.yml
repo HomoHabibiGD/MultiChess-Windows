@@ -1,0 +1,44 @@
+name: Build Windows Executable
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Chess.py"
+      - "chess/**"
+      - ".github/workflows/build-windows.yml"
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller websockets
+
+      - name: Build executable
+        # --add-data bundles the sounds folder into the exe. If your repo
+        # doesn't have a "chess" folder with the .mp3 files, PyInstaller
+        # will fail this step - either add the folder or delete this flag.
+        run: >
+          pyinstaller --onefile --windowed --name MultiChess
+          --add-data "chess;chess"
+          Chess.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MultiChess-Windows
+          path: dist/MultiChess.exe
+          retention-days: 30
