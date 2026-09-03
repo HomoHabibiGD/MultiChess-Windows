@@ -34,7 +34,7 @@ jobs:
         run: >
           pyinstaller --onefile --windowed --name MultiChess
           --add-data "chess;chess"
-          Chess.py
+          MultiChess.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
